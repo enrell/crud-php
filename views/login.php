@@ -1,37 +1,44 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
 require_once '../lib/backend.php';
 
 $error = '';
-
 $currentPage = 'login';
-include 'header.php';
 
-if ($_POST) {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    
-    try {
-        require_once '../lib/models/Email.php';
-        $emailObj = new Email($email);
-        $validatedEmail = $emailObj->getValue();
-
-        require_once '../lib/models/Password.php';
-        $passwordObj = new Password($password);
-
-        $user = $userRepository->authenticate($validatedEmail, $password);
-        if ($user) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            header('Location: ../index.php');
-            exit();
-        } else {
-            $error = 'Invalid email or password.';
+try {
+    if (!isAuthenticated()) {
+        if ($_POST) {
+            $email = $_POST['email'] ?? '';
+            $password = $_POST['password'] ?? '';
+            
+            try {
+                require_once '../lib/models/Email.php';
+                $emailObj = new Email($email);
+                $validatedEmail = $emailObj->getValue();
+        
+                require_once '../lib/models/Password.php';
+                $passwordObj = new Password($password);
+        
+                $user = $userRepository->authenticate($validatedEmail, $password);
+                if ($user) {
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
+                    header("Location: /views/login.php", true, 301);
+                    exit();
+                } else {
+                    $error = 'Invalid email or password.';
+                }
+                
+            } catch (Exception $e) {
+                $error = $e->getMessage();
+            }
         }
-    } catch (Exception $e) {
-        $error = $e->getMessage();
+    } else {
+        header("Location: /index.php");
     }
+} catch(Exception $e) {
+    echo("Auth error");
 }
+include 'header.php';
 ?>
 
 <!DOCTYPE html>
