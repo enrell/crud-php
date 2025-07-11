@@ -3,10 +3,9 @@ require_once 'lib/config/Database.php';
 require_once 'lib/security/SecurityHelper.php';
 
 if (!isAuthenticated()) {
-    header('Location: views/login.php');
+    header('Location: /views/login.php');
     exit();
 }
-
 $currentPage = 'index';
 include 'views/header.php';
 ?>
@@ -42,4 +41,3 @@ include 'views/header.php';
   </main>
 </body>
 </html>
-
