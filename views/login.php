@@ -32,7 +32,6 @@ if ($_POST) {
     $error = $e->getMessage();
   }
 }
-include 'header.php';
 ?>
 
 <!DOCTYPE html>
