@@ -17,9 +17,9 @@ if ($_POST) {
     try {
       $result = $patientRepository->create($name, $birthdate, $bloodType);
       if ($result) {
-        $_SESSION["success_message"] = "Patient created successfully!";
+        $_SESSION["success_message"] = "Patient registered successfully!";
       } else {
-        $_SESSION["error_message"] = "Failed to create patient.";
+        $_SESSION["error_message"] = "Failed to register patient.";
       }
     } catch (InvalidArgumentException $e) {
       $_SESSION["error_message"] = $e->getMessage();
@@ -47,7 +47,7 @@ if ($_POST) {
       $_SESSION["success_message"] = "Patient deleted successfully!";
     } else {
       $_SESSION["error_message"] =
-        "Failed to delete patient. They may have active appointments.";
+        "Failed to delete patient. They may have scheduled appointments.";
     }
   }
 }
@@ -56,11 +56,11 @@ $patients = $patientRepository->findAll();
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patients - Medical Appointments</title>
+    <title>Pacientes - Sistema de Agendamento Médico</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
@@ -68,8 +68,8 @@ $patients = $patientRepository->findAll();
 
     <main class="container">
         <div class="page-header-with-action">
-            <h2>Patients Management</h2>
-            <button class="btn-add" onclick="openModal()">+ Add Patient</button>
+            <h2>Gerenciamento de Pacientes</h2>
+            <button class="btn-add" onclick="openModal()">+ Adicionar Paciente</button>
         </div>
 
         <?php if (isset($_SESSION["error_message"])): ?>
@@ -87,19 +87,19 @@ $patients = $patientRepository->findAll();
         <!-- Patients List -->
         <div class="table-container">
             <div class="table-header">
-                <h3>All Patients</h3>
+                <h3>Todos os Pacientes</h3>
                 <div class="table-stats"><?= count(
                   $patients,
-                ) ?> total patients</div>
+                ) ?> pacientes no total</div>
             </div>
             <table class="patients-table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Birth Date</th>
-                        <th>Blood Type</th>
-                        <th style="padding-right: 120px;">Actions</th>
+                        <th>Nome</th>
+                        <th>Data de Nascimento</th>
+                        <th>Tipo Sanguíneo</th>
+                        <th style="padding-right: 120px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -107,8 +107,8 @@ $patients = $patientRepository->findAll();
                         <tr>
                             <td colspan="5" class="empty-state">
                                 <div>
-                                    <h3>No patients registered</h3>
-                                    <p>Click the "Add Patient" button to register your first patient.</p>
+                                    <h3>Nenhum paciente cadastrado</h3>
+                                    <p>Clique no botão "Adicionar Paciente" para cadastrar seu primeiro paciente.</p>
                                 </div>
                             </td>
                         </tr>
@@ -132,14 +132,14 @@ $patients = $patientRepository->findAll();
   $patient["name"],
 ) ?>', '<?= $patient["birthdate"] ?>', '<?= htmlspecialchars(
   $patient["blood_type"],
-) ?>')">Edit</button>
+) ?>')">Editar</button>
                                     <form method="POST" style="display: inline;">
 
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= $patient[
                                           "id"
                                         ] ?>">
-                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                        <button type="submit" class="btn btn-danger">Excluir</button>
                                     </form>
                                 </td>
                             </tr>
@@ -154,7 +154,7 @@ $patients = $patientRepository->findAll();
     <div id="patientModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">Add New Patient</h3>
+                <h3 id="modalTitle">Adicionar Novo Paciente</h3>
                 <span class="close" onclick="closeModal()">&times;</span>
             </div>
             <form method="POST">
@@ -163,19 +163,17 @@ $patients = $patientRepository->findAll();
 
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="modal_name">Patient Name:</label>
+                        <label for="modal_name">Nome:</label>
                         <input type="text" id="modal_name" name="name" required>
                     </div>
-
                     <div class="form-group">
-                        <label for="modal_birthdate">Birth Date:</label>
+                        <label for="modal_birthdate">Data de Nascimento:</label>
                         <input type="date" id="modal_birthdate" name="birthdate" required>
                     </div>
-
                     <div class="form-group">
-                        <label for="modal_blood_type">Blood Type:</label>
+                        <label for="modal_blood_type">Tipo Sanguíneo:</label>
                         <select id="modal_blood_type" name="blood_type" required>
-                            <option value="">Select Blood Type</option>
+                            <option value="">Selecione o Tipo Sanguíneo</option>
                             <option value="A+">A+</option>
                             <option value="A-">A-</option>
                             <option value="B+">B+</option>
@@ -186,10 +184,9 @@ $patients = $patientRepository->findAll();
                             <option value="O-">O-</option>
                         </select>
                     </div>
-
                     <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                        <button type="submit" class="btn btn-success" id="modalSubmitBtn">Add Patient</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-success" id="modalSubmitBtn">Adicionar Paciente</button>
                     </div>
                 </div>
             </form>
@@ -198,24 +195,24 @@ $patients = $patientRepository->findAll();
 
     <script>
         function openModal() {
-            document.getElementById('modalTitle').textContent = 'Add New Patient';
+            document.getElementById('modalTitle').textContent = 'Adicionar Novo Paciente';
             document.getElementById('modalAction').value = 'create';
             document.getElementById('modalId').value = '';
             document.getElementById('modal_name').value = '';
             document.getElementById('modal_birthdate').value = '';
             document.getElementById('modal_blood_type').value = '';
-            document.getElementById('modalSubmitBtn').textContent = 'Add Patient';
+            document.getElementById('modalSubmitBtn').textContent = 'Adicionar Paciente';
             document.getElementById('patientModal').style.display = 'block';
         }
 
         function openEditModal(id, name, birthdate, bloodType) {
-            document.getElementById('modalTitle').textContent = 'Edit Patient';
+            document.getElementById('modalTitle').textContent = 'Editar Paciente';
             document.getElementById('modalAction').value = 'update';
             document.getElementById('modalId').value = id;
             document.getElementById('modal_name').value = name;
             document.getElementById('modal_birthdate').value = birthdate;
             document.getElementById('modal_blood_type').value = bloodType;
-            document.getElementById('modalSubmitBtn').textContent = 'Update Patient';
+            document.getElementById('modalSubmitBtn').textContent = 'Atualizar Paciente';
             document.getElementById('patientModal').style.display = 'block';
         }
 

@@ -18,9 +18,9 @@ if ($_POST) {
     try {
       $result = $doctorRepository->create($name, $expertise);
       if ($result) {
-        $_SESSION["success_message"] = "Doctor created successfully!";
+        $_SESSION["success_message"] = "Doctor registered successfully!";
       } else {
-        $_SESSION["error_message"] = "Failed to create doctor.";
+        $_SESSION["error_message"] = "Failed to register doctor.";
       }
     } catch (InvalidArgumentException $e) {
       $_SESSION["error_message"] = $e->getMessage();
@@ -60,11 +60,11 @@ $doctors = $doctorRepository->findAll();
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctors - Medical Appointments</title>
+    <title>Médicos - Sistema de Agendamento Médico</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
@@ -72,8 +72,8 @@ $doctors = $doctorRepository->findAll();
 
     <main class="container">
         <div class="page-header-with-action">
-            <h2>Doctors Management</h2>
-            <button class="btn-add" onclick="openModal()">+ Add Doctor</button>
+            <h2>Gerenciamento de Médicos</h2>
+            <button class="btn-add" onclick="openModal()">+ Adicionar Médico</button>
         </div>
 
         <?php if (isset($_SESSION["error_message"])): ?>
@@ -93,18 +93,18 @@ $doctors = $doctorRepository->findAll();
         <!-- Doctors List -->
         <div class="table-container">
             <div class="table-header">
-                <h3>All Doctors</h3>
+                <h3>Todos os Médicos</h3>
                 <div class="table-stats"><?= count(
                   $doctors,
-                ) ?> total doctors</div>
+                ) ?> médicos no total</div>
             </div>
             <table class="doctors-table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Expertise</th>
-                        <th style="padding-right: 80px;">Actions</th>
+                        <th>Nome</th>
+                        <th>Especialidade</th>
+                        <th style="padding-right: 80px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -112,8 +112,8 @@ $doctors = $doctorRepository->findAll();
                         <tr>
                             <td colspan="4" class="empty-state">
                                 <div>
-                                    <h3>No doctors registered</h3>
-                                    <p>Click the "Add Doctor" button to register your first doctor.</p>
+                                    <h3>Nenhum médico cadastrado</h3>
+                                    <p>Clique no botão "Adicionar Médico" para cadastrar seu primeiro médico.</p>
                                 </div>
                             </td>
                         </tr>
@@ -132,14 +132,14 @@ $doctors = $doctorRepository->findAll();
                                       "id"
                                     ] ?>, '<?= htmlspecialchars(
   $doctor["name"],
-) ?>', '<?= htmlspecialchars($doctor["expertise"]) ?>')">Edit</button>
+) ?>', '<?= htmlspecialchars($doctor["expertise"]) ?>')">Editar</button>
                                     <form method="POST" style="display: inline;">
 
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= $doctor[
                                           "id"
                                         ] ?>">
-                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                        <button type="submit" class="btn btn-danger">Excluir</button>
                                     </form>
                                 </td>
                             </tr>
@@ -154,7 +154,7 @@ $doctors = $doctorRepository->findAll();
     <div id="doctorModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">Add New Doctor</h3>
+                <h3 id="modalTitle">Adicionar Novo Médico</h3>
                 <span class="close" onclick="closeModal()">&times;</span>
             </div>
             <form method="POST">
@@ -163,19 +163,19 @@ $doctors = $doctorRepository->findAll();
 
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="modal_name">Doctor Name:</label>
+                        <label for="modal_name">Nome do Médico:</label>
                         <input type="text" id="modal_name" name="name" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="modal_expertise">Expertise:</label>
+                        <label for="modal_expertise">Especialidade:</label>
                         <input type="text" id="modal_expertise" name="expertise" required
-                               placeholder="e.g., Cardiology, Pediatrics, General Medicine">
+                               placeholder="ex: Cardiologia, Pediatria, Clínica Geral">
                     </div>
 
                     <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                        <button type="submit" class="btn btn-success" id="modalSubmitBtn">Add Doctor</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-success" id="modalSubmitBtn">Adicionar Médico</button>
                     </div>
                 </div>
             </form>
@@ -184,22 +184,22 @@ $doctors = $doctorRepository->findAll();
 
     <script>
         function openModal() {
-            document.getElementById('modalTitle').textContent = 'Add New Doctor';
+            document.getElementById('modalTitle').textContent = 'Adicionar Novo Médico';
             document.getElementById('modalAction').value = 'create';
             document.getElementById('modalId').value = '';
             document.getElementById('modal_name').value = '';
             document.getElementById('modal_expertise').value = '';
-            document.getElementById('modalSubmitBtn').textContent = 'Add Doctor';
+            document.getElementById('modalSubmitBtn').textContent = 'Adicionar Médico';
             document.getElementById('doctorModal').style.display = 'block';
         }
 
         function openEditModal(id, name, expertise) {
-            document.getElementById('modalTitle').textContent = 'Edit Doctor';
+            document.getElementById('modalTitle').textContent = 'Editar Médico';
             document.getElementById('modalAction').value = 'update';
             document.getElementById('modalId').value = id;
             document.getElementById('modal_name').value = name;
             document.getElementById('modal_expertise').value = expertise;
-            document.getElementById('modalSubmitBtn').textContent = 'Update Doctor';
+            document.getElementById('modalSubmitBtn').textContent = 'Atualizar Médico';
             document.getElementById('doctorModal').style.display = 'block';
         }
 

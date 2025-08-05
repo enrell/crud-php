@@ -25,9 +25,6 @@ if ($_POST && $appointment) {
   $appointmentDate = $_POST["appointment_date"] ?? "";
   $description = sanitizeInput($_POST["description"] ?? "");
 
-  // Format date for database
-  $appointmentDate = str_replace("T", " ", $appointmentDate) . ":00";
-
   $result = $appointmentRepository->update(
     $appointment["id"],
     $doctorId,
@@ -43,23 +40,20 @@ if ($_POST && $appointment) {
     $error = "Failed to update appointment.";
   }
 }
-
-$doctors = $doctorRepository->findAll();
-$patients = $patientRepository->findAll();
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Appointment - Medical Appointments</title>
+    <title>Editar Consulta - Sistema de Agendamento Médico</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
     <main class="container">
         <div class="page-header">
-            <h2>Edit Appointment</h2>
+            <h2>Editar Consulta</h2>
         </div>
 
         <?php if ($error): ?>
@@ -76,9 +70,9 @@ $patients = $patientRepository->findAll();
         <div class="form-container">
             <form method="POST">
                 <div class="form-group">
-                    <label for="doctor_id">Doctor:</label>
+                    <label for="doctor_id">Médico:</label>
                     <select id="doctor_id" name="doctor_id" required>
-                        <option value="">Select Doctor</option>
+                        <option value="">Selecione o Médico</option>
                         <?php foreach ($doctors as $doctor): ?>
                             <option value="<?= $doctor["id"] ?>" <?= $doctor[
   "id"
@@ -96,9 +90,9 @@ $patients = $patientRepository->findAll();
                 </div>
 
                 <div class="form-group">
-                    <label for="patient_id">Patient:</label>
+                    <label for="patient_id">Paciente:</label>
                     <select id="patient_id" name="patient_id" required>
-                        <option value="">Select Patient</option>
+                        <option value="">Selecione o Paciente</option>
                         <?php foreach ($patients as $patient): ?>
                             <option value="<?= $patient["id"] ?>" <?= $patient[
   "id"
@@ -112,7 +106,7 @@ $patients = $patientRepository->findAll();
                 </div>
 
                 <div class="form-group">
-                    <label for="appointment_date">Appointment Date & Time:</label>
+                    <label for="appointment_date">Data e Hora da Consulta:</label>
                     <input type="datetime-local" id="appointment_date" name="appointment_date" required
                            value="<?= htmlspecialchars(
                              date(
@@ -123,15 +117,15 @@ $patients = $patientRepository->findAll();
                 </div>
 
                 <div class="form-group">
-                    <label for="description">Description:</label>
+                    <label for="description">Descrição:</label>
                     <textarea id="description" name="description" rows="3" required
-                              placeholder="Describe the reason for the appointment..."><?= htmlspecialchars(
+                              placeholder="Descreva o motivo da consulta..."><?= htmlspecialchars(
                                 $appointment["description"],
                               ) ?></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-success">Update Appointment</button>
-                <a href="appointments.php" class="btn btn-secondary">Back to Appointments</a>
+                <button type="submit" class="btn btn-success">Atualizar Consulta</button>
+                <a href="appointments.php" class="btn btn-secondary">Voltar para Consultas</a>
             </form>
         </div>
         <?php endif; ?>

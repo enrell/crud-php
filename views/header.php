@@ -1,31 +1,32 @@
+<?php require_once __DIR__ . "/../lib/security/SecurityHelper.php"; ?>
 <header>
     <div class="container">
-        <h1>Medical Appointments System</h1>
+        <h1>Sistema de Agendamento Médico</h1>
         <nav>
             <?php if (isAuthenticated()): ?>
                 <a href="/index.php" class="<?= $currentPage === "index"
                   ? "active"
-                  : "" ?>">Home</a>
+                  : "" ?>">Início</a>
                 <a href="/views/appointments.php" class="<?= $currentPage ===
                 "appointments"
                   ? "active"
-                  : "" ?>">Appointments</a>
+                  : "" ?>">Consultas</a>
                 <a href="/views/doctors.php" class="<?= $currentPage ===
                 "doctors"
                   ? "active"
-                  : "" ?>">Doctors</a>
+                  : "" ?>">Médicos</a>
                 <a href="/views/patients.php" class="<?= $currentPage ===
                 "patients"
                   ? "active"
-                  : "" ?>">Patients</a>
-                <a href="/views/logout.php">Logout</a>
+                  : "" ?>">Pacientes</a>
+                <a href="/views/logout.php">Sair</a>
             <?php else: ?>
                 <a href="/views/login.php" class="<?= $currentPage === "login"
                   ? "active"
-                  : "" ?>">Login</a>
+                  : "" ?>">Entrar</a>
                 <a href="/views/signup.php" class="<?= $currentPage === "signup"
                   ? "active"
-                  : "" ?>">Sign Up</a>
+                  : "" ?>">Cadastrar</a>
             <?php endif; ?>
         </nav>
     </div>

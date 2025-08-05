@@ -41,17 +41,17 @@ if ($_POST && $patient) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Patient - Medical Appointments</title>
+    <title>Editar Paciente - Sistema de Agendamento Médico</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
     <main class="container">
         <div class="page-header">
-            <h2>Edit Patient</h2>
+            <h2>Editar Paciente</h2>
         </div>
 
         <?php if ($error): ?>
@@ -68,23 +68,23 @@ if ($_POST && $patient) {
         <div class="form-container">
             <form method="POST">
                 <div class="form-group">
-                    <label for="name">Patient Name:</label>
+                    <label for="name">Nome do Paciente:</label>
                     <input type="text" id="name" name="name" required value="<?= htmlspecialchars(
                       $patient["name"],
                     ) ?>">
                 </div>
 
                 <div class="form-group">
-                    <label for="birthdate">Birth Date:</label>
+                    <label for="birthdate">Data de Nascimento:</label>
                     <input type="date" id="birthdate" name="birthdate" required value="<?= htmlspecialchars(
                       $patient["birthdate"],
                     ) ?>">
                 </div>
 
                 <div class="form-group">
-                    <label for="blood_type">Blood Type:</label>
+                    <label for="blood_type">Tipo Sanguíneo:</label>
                     <select id="blood_type" name="blood_type" required>
-                        <option value="">Select Blood Type</option>
+                        <option value="">Selecione o Tipo Sanguíneo</option>
                         <option value="A+" <?= $patient["blood_type"] === "A+"
                           ? "selected"
                           : "" ?>>A+</option>
@@ -112,8 +112,8 @@ if ($_POST && $patient) {
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-success">Update Patient</button>
-                <a href="patients.php" class="btn btn-secondary">Back to Patients</a>
+                <button type="submit" class="btn btn-success">Atualizar Paciente</button>
+                <a href="patients.php" class="btn btn-secondary">Voltar para Pacientes</a>
             </form>
         </div>
         <?php endif; ?>

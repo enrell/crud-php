@@ -35,17 +35,17 @@ if ($_POST && $doctor) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Doctor - Medical Appointments</title>
+    <title>Editar Médico - Sistema de Agendamento Médico</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
     <main class="container">
         <div class="page-header">
-            <h2>Edit Doctor</h2>
+            <h2>Editar Médico</h2>
         </div>
 
         <?php if ($error): ?>
@@ -62,21 +62,21 @@ if ($_POST && $doctor) {
         <div class="form-container">
             <form method="POST">
                 <div class="form-group">
-                    <label for="name">Doctor Name:</label>
+                    <label for="name">Nome do Médico:</label>
                     <input type="text" id="name" name="name" required value="<?= htmlspecialchars(
                       $doctor["name"],
                     ) ?>">
                 </div>
 
                 <div class="form-group">
-                    <label for="expertise">Expertise:</label>
+                    <label for="expertise">Especialidade:</label>
                     <input type="text" id="expertise" name="expertise" required value="<?= htmlspecialchars(
                       $doctor["expertise"],
                     ) ?>">
                 </div>
 
-                <button type="submit" class="btn btn-success">Update Doctor</button>
-                <a href="doctors.php" class="btn btn-secondary">Back to Doctors</a>
+                <button type="submit" class="btn btn-success">Atualizar Médico</button>
+                <a href="doctors.php" class="btn btn-secondary">Voltar para Médicos</a>
             </form>
         </div>
         <?php endif; ?>

@@ -1,11 +1,10 @@
 <?php
-header("Content-Type: text/html; charset=utf-8");
+include "header.php";
 require_once "../lib/backend.php";
 
 $error = "";
 
 $currentPage = "login";
-include "header.php";
 
 if ($_POST) {
   $email = $_POST["email"] ?? "";
@@ -35,19 +34,17 @@ if ($_POST) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Medical Appointments</title>
+    <title>Entrar - Sistema de Agendamento Médico</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-
-
     <main class="container">
         <div class="form-container">
-            <h2>Login</h2>
+            <h2>Entrar</h2>
 
             <?php if ($error): ?>
                 <div class="alert alert-error"><?= htmlspecialchars(
@@ -59,7 +56,7 @@ if ($_POST) {
 
 
                 <div class="form-group">
-                    <label for="email">Email:</label>
+                    <label for="email">E-mail:</label>
                     <input type="email" id="email" name="email" required
                            value="<?= htmlspecialchars(
                              $_POST["email"] ?? "",
@@ -67,12 +64,12 @@ if ($_POST) {
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password:</label>
+                    <label for="password">Senha:</label>
                     <input type="password" id="password" name="password" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Login</button>
-                <a href="signup.php" class="btn btn-secondary">Create Account</a>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+                <a href="signup.php" class="btn btn-secondary">Criar Conta</a>
             </form>
         </div>
     </main>

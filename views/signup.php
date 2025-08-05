@@ -46,11 +46,11 @@ if ($_POST) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - Medical Appointments</title>
+    <title>Cadastrar - Sistema de Agendamento Médico</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
@@ -58,7 +58,7 @@ if ($_POST) {
 
     <main class="container">
         <div class="form-container">
-            <h2>Create Account</h2>
+            <h2>Criar Conta</h2>
 
             <?php if ($error): ?>
                 <div class="alert alert-error"><?= htmlspecialchars(
@@ -76,7 +76,7 @@ if ($_POST) {
 
 
                 <div class="form-group">
-                    <label for="username">Username:</label>
+                    <label for="username">Nome de usuário:</label>
                     <input type="text" id="username" name="username" required
                            value="<?= htmlspecialchars(
                              $_POST["username"] ?? "",
@@ -84,7 +84,7 @@ if ($_POST) {
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email:</label>
+                    <label for="email">E-mail:</label>
                     <input type="email" id="email" name="email" required
                            value="<?= htmlspecialchars(
                              $_POST["email"] ?? "",
@@ -92,13 +92,13 @@ if ($_POST) {
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password:</label>
+                    <label for="password">Senha:</label>
                     <input type="password" id="password" name="password" required>
-                    <small>Password must be at least 8 characters.</small>
+                    <small>A senha deve ter pelo menos 8 caracteres.</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Create Account</button>
-                <a href="login.php" class="btn btn-secondary">Already have an account?</a>
+                <button type="submit" class="btn btn-primary">Criar Conta</button>
+                <a href="login.php" class="btn btn-secondary">Já tem uma conta?</a>
             </form>
         </div>
     </main>
