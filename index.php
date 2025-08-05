@@ -1,13 +1,14 @@
 <?php
-require_once 'lib/config/Database.php';
-require_once 'lib/security/SecurityHelper.php';
+require_once "lib/config/Database.php";
+require_once "lib/security/SecurityHelper.php";
 
 if (!isAuthenticated()) {
-    header('Location: /views/login.php');
-    exit();
+  header("Location: views/login.php");
+  exit();
 }
-$currentPage = 'index';
-include 'views/header.php';
+
+$currentPage = "index";
+include "views/header.php";
 ?>
 
 <!DOCTYPE html>

@@ -1,42 +1,36 @@
 <?php
-require_once '../lib/backend.php';
+header("Content-Type: text/html; charset=utf-8");
+require_once "../lib/backend.php";
 
-$error = '';
-$currentPage = 'login';
+$error = "";
 
-try {
-    if (!isAuthenticated()) {
-        if ($_POST) {
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
-            
-            try {
-                require_once '../lib/models/Email.php';
-                $emailObj = new Email($email);
-                $validatedEmail = $emailObj->getValue();
-        
-                require_once '../lib/models/Password.php';
-                $passwordObj = new Password($password);
-        
-                $user = $userRepository->authenticate($validatedEmail, $password);
-                if ($user) {
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['username'] = $user['username'];
-                    header("Location: /views/login.php", true, 301);
-                    exit();
-                } else {
-                    $error = 'Invalid email or password.';
-                }
-                
-            } catch (Exception $e) {
-                $error = $e->getMessage();
-            }
-        }
+$currentPage = "login";
+include "header.php";
+
+if ($_POST) {
+  $email = $_POST["email"] ?? "";
+  $password = $_POST["password"] ?? "";
+
+  try {
+    require_once "../lib/models/Email.php";
+    $emailObj = new Email($email);
+    $validatedEmail = $emailObj->getValue();
+
+    require_once "../lib/models/Password.php";
+    $passwordObj = new Password($password);
+
+    $user = $userRepository->authenticate($validatedEmail, $password);
+    if ($user) {
+      $_SESSION["user_id"] = $user["id"];
+      $_SESSION["username"] = $user["username"];
+      header("Location: ../index.php");
+      exit();
     } else {
-        header("Location: /index.php");
+      $error = "Invalid email or password.";
     }
-} catch(Exception $e) {
-    echo("Auth error");
+  } catch (Exception $e) {
+    $error = $e->getMessage();
+  }
 }
 include 'header.php';
 ?>
@@ -50,23 +44,27 @@ include 'header.php';
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-    
+
 
     <main class="container">
         <div class="form-container">
             <h2>Login</h2>
-            
+
             <?php if ($error): ?>
-                <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
+                <div class="alert alert-error"><?= htmlspecialchars(
+                  $error,
+                ) ?></div>
             <?php endif; ?>
 
             <form method="POST">
-                
-                
+
+
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required 
-                           value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                    <input type="email" id="email" name="email" required
+                           value="<?= htmlspecialchars(
+                             $_POST["email"] ?? "",
+                           ) ?>">
                 </div>
 
                 <div class="form-group">

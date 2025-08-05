@@ -1,60 +1,60 @@
 <?php
-require_once '../lib/backend.php';
+require_once "../lib/backend.php";
 requireAuth();
 
-$error = '';
+$error = "";
 
-
-$currentPage = 'doctors';
-include 'header.php';
+$currentPage = "doctors";
+include "header.php";
 
 // Handle form submissions
 if ($_POST) {
-        $action = $_POST['action'] ?? '';
-        
-        if ($action === 'create') {
-            $name = $_POST['name'] ?? '';
-            $expertise = $_POST['expertise'] ?? '';
-            
-            try {
-                $result = $doctorRepository->create($name, $expertise);
-                if ($result) {
-                    $_SESSION['success_message'] = 'Doctor created successfully!';
-                } else {
-                    $_SESSION['error_message'] = 'Failed to create doctor.';
-                }
-            } catch (InvalidArgumentException $e) {
-                $_SESSION['error_message'] = $e->getMessage();
-            }
-        } elseif ($action === 'update') {
-            $id = (int)($_POST['id'] ?? 0);
-            $name = $_POST['name'] ?? '';
-            $expertise = $_POST['expertise'] ?? '';
-            
-            try {
-                $result = $doctorRepository->update($id, $name, $expertise);
-                if ($result) {
-                    $_SESSION['success_message'] = 'Doctor updated successfully!';
-                } else {
-                    $error = 'Failed to update doctor.';
-                }
-            } catch (InvalidArgumentException $e) {
-                $_SESSION['error_message'] = $e->getMessage();
-            }
-        } elseif ($action === 'delete') {
-            $id = (int)($_POST['id'] ?? 0);
-            try {
-                $result = $doctorRepository->delete($id);
-                if ($result) {
-                    $_SESSION['success_message'] = 'Doctor deleted successfully!';
-                } else {
-                    $_SESSION['error_message'] = 'Failed to delete doctor. They may have active appointments.';
-                }
-            } catch (InvalidArgumentException $e) {
-                $_SESSION['error_message'] = $e->getMessage();
-            }
-        }
+  $action = $_POST["action"] ?? "";
+
+  if ($action === "create") {
+    $name = $_POST["name"] ?? "";
+    $expertise = $_POST["expertise"] ?? "";
+
+    try {
+      $result = $doctorRepository->create($name, $expertise);
+      if ($result) {
+        $_SESSION["success_message"] = "Doctor created successfully!";
+      } else {
+        $_SESSION["error_message"] = "Failed to create doctor.";
+      }
+    } catch (InvalidArgumentException $e) {
+      $_SESSION["error_message"] = $e->getMessage();
     }
+  } elseif ($action === "update") {
+    $id = (int) ($_POST["id"] ?? 0);
+    $name = $_POST["name"] ?? "";
+    $expertise = $_POST["expertise"] ?? "";
+
+    try {
+      $result = $doctorRepository->update($id, $name, $expertise);
+      if ($result) {
+        $_SESSION["success_message"] = "Doctor updated successfully!";
+      } else {
+        $error = "Failed to update doctor.";
+      }
+    } catch (InvalidArgumentException $e) {
+      $_SESSION["error_message"] = $e->getMessage();
+    }
+  } elseif ($action === "delete") {
+    $id = (int) ($_POST["id"] ?? 0);
+    try {
+      $result = $doctorRepository->delete($id);
+      if ($result) {
+        $_SESSION["success_message"] = "Doctor deleted successfully!";
+      } else {
+        $_SESSION["error_message"] =
+          "Failed to delete doctor. They may have active appointments.";
+      }
+    } catch (InvalidArgumentException $e) {
+      $_SESSION["error_message"] = $e->getMessage();
+    }
+  }
+}
 
 $doctors = $doctorRepository->findAll();
 ?>
@@ -68,33 +68,35 @@ $doctors = $doctorRepository->findAll();
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-    
+
 
     <main class="container">
         <div class="page-header-with-action">
             <h2>Doctors Management</h2>
             <button class="btn-add" onclick="openModal()">+ Add Doctor</button>
         </div>
-        
-        <?php
-        if (isset($_SESSION['error_message'])): ?>
-            <div class="alert alert-error"><?= htmlspecialchars($_SESSION['error_message']) ?></div>
-            <?php unset($_SESSION['error_message']);
-        endif; ?>
-        
-        <?php
-        if (isset($_SESSION['success_message'])): ?>
-            <div class="alert alert-success"><?= htmlspecialchars($_SESSION['success_message']) ?></div>
-            <?php unset($_SESSION['success_message']);
-        endif; ?>
 
-        
+        <?php if (isset($_SESSION["error_message"])): ?>
+            <div class="alert alert-error"><?= htmlspecialchars(
+              $_SESSION["error_message"],
+            ) ?></div>
+            <?php unset($_SESSION["error_message"]);endif; ?>
+
+        <?php if (isset($_SESSION["success_message"])): ?>
+            <div class="alert alert-success"><?= htmlspecialchars(
+              $_SESSION["success_message"],
+            ) ?></div>
+            <?php unset($_SESSION["success_message"]);endif; ?>
+
+
 
         <!-- Doctors List -->
         <div class="table-container">
             <div class="table-header">
                 <h3>All Doctors</h3>
-                <div class="table-stats"><?= count($doctors) ?> total doctors</div>
+                <div class="table-stats"><?= count(
+                  $doctors,
+                ) ?> total doctors</div>
             </div>
             <table class="doctors-table">
                 <thead>
@@ -118,15 +120,25 @@ $doctors = $doctorRepository->findAll();
                     <?php else: ?>
                         <?php foreach ($doctors as $doctor): ?>
                             <tr>
-                                <td><?= htmlspecialchars($doctor['id']) ?></td>
-                                <td><?= htmlspecialchars($doctor['name']) ?></td>
-                                <td><?= htmlspecialchars($doctor['expertise']) ?></td>
+                                <td><?= htmlspecialchars($doctor["id"]) ?></td>
+                                <td><?= htmlspecialchars(
+                                  $doctor["name"],
+                                ) ?></td>
+                                <td><?= htmlspecialchars(
+                                  $doctor["expertise"],
+                                ) ?></td>
                                 <td class="actions">
-                                    <button class="btn btn-warning" onclick="openEditModal(<?= $doctor['id'] ?>, '<?= htmlspecialchars($doctor['name']) ?>', '<?= htmlspecialchars($doctor['expertise']) ?>')">Edit</button>
+                                    <button class="btn btn-warning" onclick="openEditModal(<?= $doctor[
+                                      "id"
+                                    ] ?>, '<?= htmlspecialchars(
+  $doctor["name"],
+) ?>', '<?= htmlspecialchars($doctor["expertise"]) ?>')">Edit</button>
                                     <form method="POST" style="display: inline;">
-                                        
+
                                         <input type="hidden" name="action" value="delete">
-                                        <input type="hidden" name="id" value="<?= $doctor['id'] ?>">
+                                        <input type="hidden" name="id" value="<?= $doctor[
+                                          "id"
+                                        ] ?>">
                                         <button type="submit" class="btn btn-danger">Delete</button>
                                     </form>
                                 </td>
@@ -148,7 +160,7 @@ $doctors = $doctorRepository->findAll();
             <form method="POST">
                 <input type="hidden" name="action" id="modalAction" value="create">
                 <input type="hidden" name="id" id="modalId" value="">
-                
+
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="modal_name">Doctor Name:</label>
@@ -157,7 +169,7 @@ $doctors = $doctorRepository->findAll();
 
                     <div class="form-group">
                         <label for="modal_expertise">Expertise:</label>
-                        <input type="text" id="modal_expertise" name="expertise" required 
+                        <input type="text" id="modal_expertise" name="expertise" required
                                placeholder="e.g., Cardiology, Pediatrics, General Medicine">
                     </div>
 

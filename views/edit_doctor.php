@@ -1,36 +1,36 @@
 <?php
-require_once '../lib/backend.php';
+require_once "../lib/backend.php";
 requireAuth();
 
-$error = '';
-$success = '';
+$error = "";
+$success = "";
 $doctor = null;
 
-$currentPage = 'doctors';
-include 'header.php';
+$currentPage = "doctors";
+include "header.php";
 
-if (isset($_GET['id'])) {
-    $id = (int)$_GET['id'];
-    $doctor = $doctorRepository->findById($id);
-    if (!$doctor) {
-        $error = 'Doctor not found.';
-    }
+if (isset($_GET["id"])) {
+  $id = (int) $_GET["id"];
+  $doctor = $doctorRepository->findById($id);
+  if (!$doctor) {
+    $error = "Doctor not found.";
+  }
 } else {
-    $error = 'No doctor ID provided.';
+  $error = "No doctor ID provided.";
 }
 
 if ($_POST && $doctor) {
-    $name = sanitizeInput($_POST['name'] ?? '');
-    $expertise = sanitizeInput($_POST['expertise'] ?? '');
+  $name = sanitizeInput($_POST["name"] ?? "");
+  $expertise = sanitizeInput($_POST["expertise"] ?? "");
 
-    $result = $doctorRepository->update($doctor['id'], $name, $expertise);
-    if ($result) {
-        $success = 'Doctor updated successfully!';
-        // Refresh doctor data after update
-        $doctor = $doctorRepository->findById($doctor['id']);
-    } else {
-        $error = 'Failed to update doctor.';
-    }
+  $result = $doctorRepository->update($doctor["id"], $name, $expertise);
+  if ($result) {
+    $success = "Doctor updated successfully!";
+    // Refresh doctor data after update
+    $doctor = $doctorRepository->findById($doctor["id"]);
+  } else {
+    $error = "Failed to update doctor.";
+  }
 }
 ?>
 
@@ -47,13 +47,15 @@ if ($_POST && $doctor) {
         <div class="page-header">
             <h2>Edit Doctor</h2>
         </div>
-        
+
         <?php if ($error): ?>
             <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
-        
+
         <?php if ($success): ?>
-            <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
+            <div class="alert alert-success"><?= htmlspecialchars(
+              $success,
+            ) ?></div>
         <?php endif; ?>
 
         <?php if ($doctor): ?>
@@ -61,12 +63,16 @@ if ($_POST && $doctor) {
             <form method="POST">
                 <div class="form-group">
                     <label for="name">Doctor Name:</label>
-                    <input type="text" id="name" name="name" required value="<?= htmlspecialchars($doctor['name']) ?>">
+                    <input type="text" id="name" name="name" required value="<?= htmlspecialchars(
+                      $doctor["name"],
+                    ) ?>">
                 </div>
 
                 <div class="form-group">
                     <label for="expertise">Expertise:</label>
-                    <input type="text" id="expertise" name="expertise" required value="<?= htmlspecialchars($doctor['expertise']) ?>">
+                    <input type="text" id="expertise" name="expertise" required value="<?= htmlspecialchars(
+                      $doctor["expertise"],
+                    ) ?>">
                 </div>
 
                 <button type="submit" class="btn btn-success">Update Doctor</button>

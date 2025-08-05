@@ -2,9 +2,6 @@
 require_once '../lib/backend.php';
 requireAuth();
 
-
-
-
 $currentPage = 'appointments';
 include 'header.php';
 
@@ -80,10 +77,6 @@ $patients = $patientRepository->findAll();
             <button class="btn-add" onclick="openModal()">+ New Appointment</button>
         </div>
         
-        
-        
-        
-        
         <?php
         if (isset($_SESSION['error_message'])): ?>
             <div class="alert alert-error"><?= htmlspecialchars($_SESSION['error_message']) ?></div>
@@ -95,8 +88,6 @@ $patients = $patientRepository->findAll();
             <div class="alert alert-success"><?= htmlspecialchars($_SESSION['success_message']) ?></div>
             <?php unset($_SESSION['success_message']);
         endif; ?>
-
-        
 
         <!-- Appointments List -->
         <div class="table-container">
