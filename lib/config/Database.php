@@ -14,6 +14,7 @@ try {
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT NOT NULL UNIQUE,
                         email TEXT NOT NULL UNIQUE,
+                        profile_image TEXT,
                         password TEXT NOT NULL,
                         last_login TEXT DEFAULT CURRENT_TIMESTAMP
                       );
