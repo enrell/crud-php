@@ -41,13 +41,14 @@ if ($action === 'upload') {
     }
 
     // Create user directory
-    $userDir = __DIR__ . "/../public/{$userId}/profile_image";
+    $baseDir = dirname(__DIR__);
+    $userDir = "{$baseDir}/public/{$userId}/profile_image";
     if (!file_exists($userDir)) {
         mkdir($userDir, 0755, true);
     }
 
     // Remove old images
-    $oldImages = glob($userDir . '/*');
+    $oldImages = glob("{$userDir}/*");
     foreach ($oldImages as $oldImage) {
         if (is_file($oldImage)) {
             unlink($oldImage);
@@ -56,8 +57,8 @@ if ($action === 'upload') {
 
     // Save new image
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = 'image.' . $extension;
-    $targetPath = $userDir . '/' . $filename;
+    $filename = "image.{$extension}";
+    $targetPath = "{$userDir}/{$filename}";
     $relativePath = "/public/{$userId}/profile_image/{$filename}";
 
     if (move_uploaded_file($file['tmp_name'], $targetPath)) {
@@ -67,7 +68,7 @@ if ($action === 'upload') {
             $response['message'] = 'Imagem atualizada com sucesso!';
             $response['image_path'] = $relativePath;
         } catch (Exception $e) {
-            $response['message'] = 'Erro ao salvar no banco: ' . $e->getMessage();
+            $response['message'] = "Erro ao salvar no banco: {$e->getMessage()}";
         }
     } else {
         $response['message'] = 'Erro ao salvar a imagem';
@@ -79,7 +80,7 @@ if ($action === 'upload') {
         $imagePath = $user['profile_image'];
 
         if ($imagePath) {
-            $fullPath = __DIR__ . '/..' . $imagePath;
+            $fullPath = dirname(__DIR__) . $imagePath;
             if (file_exists($fullPath)) {
                 unlink($fullPath);
             }
@@ -89,9 +90,8 @@ if ($action === 'upload') {
         $response['success'] = true;
         $response['message'] = 'Imagem removida com sucesso!';
     } catch (Exception $e) {
-        $response['message'] = 'Erro ao remover imagem: ' . $e->getMessage();
+        $response['message'] = "Erro ao remover imagem: {$e->getMessage()}";
     }
 }
 
 echo json_encode($response);
-?>

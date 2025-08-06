@@ -21,5 +21,3 @@ class Patient extends Person
     return $this->bloodType->getValue();
   }
 }
-
-?>

@@ -12,5 +12,3 @@ $userRepository = new UserRepository($db);
 $doctorRepository = new DoctorRepository($db);
 $patientRepository = new PatientRepository($db);
 $appointmentRepository = new AppointmentRepository($db);
-
-?>

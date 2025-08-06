@@ -11,7 +11,7 @@ try {
 try {
   $db->exec(
     statement: "CREATE TABLE IF NOT EXISTS user (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        id TEXT PRIMARY KEY,
                         username TEXT NOT NULL UNIQUE,
                         email TEXT NOT NULL UNIQUE,
                         profile_image TEXT,

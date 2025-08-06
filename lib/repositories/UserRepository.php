@@ -5,7 +5,7 @@ require_once __DIR__ . "/../security/SecurityHelper.php";
 require_once __DIR__ . "/../models/Email.php";
 require_once __DIR__ . "/../models/Name.php";
 require_once __DIR__ . "/../models/Password.php";
-require_once __DIR__ . "/../models/EntityId.php";
+require_once __DIR__ . "/../models/UUID.php";
 
 class UserRepository
 {
@@ -24,8 +24,8 @@ class UserRepository
     try {
       $nameObj = new Name($username);
       $emailObj = new Email($email);
+      $uuidObj = new UUID();
 
-      // Check if user already exists
       if (
         $this->findByEmail($emailObj->getValue()) ||
         $this->findByUsername($nameObj->getValue())
@@ -34,9 +34,10 @@ class UserRepository
       }
 
       $stmt = $this->db->prepare(
-        "INSERT INTO user (username, email, password) VALUES (?, ?, ?)",
+        "INSERT INTO user (id, username, email, password) VALUES (?, ?, ?, ?)",
       );
       $result = $stmt->execute([
+        $uuidObj->getValue(),
         $nameObj->getValue(),
         $emailObj->getValue(),
         $hashedPassword,
@@ -53,15 +54,15 @@ class UserRepository
     }
   }
 
-  public function findById(int $id): ?array
+  public function findById(string $id): ?array
   {
     try {
-      $entityId = new EntityId($id);
+      $uuidObj = new UUID($id);
 
       $stmt = $this->db->prepare(
         "SELECT id, username, email, profile_image FROM user WHERE id = ?",
       );
-      $stmt->execute([$entityId->getValue()]);
+      $stmt->execute([$uuidObj->getValue()]);
       $result = $stmt->fetch(PDO::FETCH_ASSOC);
       return $result ?: null;
     } catch (PDOException $e) {
@@ -74,15 +75,15 @@ class UserRepository
     }
   }
 
-  public function findByIdWithPassword(int $id): ?array
+  public function findByIdWithPassword(string $id): ?array
   {
     try {
-      $entityId = new EntityId($id);
+      $uuidObj = new UUID($id);
 
       $stmt = $this->db->prepare(
         "SELECT id, username, email, password, profile_image FROM user WHERE id = ?",
       );
-      $stmt->execute([$entityId->getValue()]);
+      $stmt->execute([$uuidObj->getValue()]);
       $result = $stmt->fetch(PDO::FETCH_ASSOC);
       return $result ?: null;
     } catch (PDOException $e) {
@@ -129,15 +130,14 @@ class UserRepository
     }
   }
 
-  public function update(int $id, string $username, string $email): bool
+  public function update(string $id, string $username, string $email): bool
   {
     try {
-      $entityId = new EntityId($id);
+      $uuidObj = new UUID($id);
       $nameObj = new Name($username);
       $emailObj = new Email($email);
 
-      // Security check - users can only update their own data
-      if (!isAuthenticated() || $_SESSION["user_id"] != $entityId->getValue()) {
+      if (!isAuthenticated() || $_SESSION["user_id"] != $uuidObj->getValue()) {
         throw new Exception("Unauthorized access attempt");
       }
 
@@ -147,7 +147,7 @@ class UserRepository
       $result = $stmt->execute([
         $nameObj->getValue(),
         $emailObj->getValue(),
-        $entityId->getValue(),
+        $uuidObj->getValue(),
       ]);
 
       return $result;
@@ -161,21 +161,20 @@ class UserRepository
     }
   }
 
-  public function delete(int $id): bool
+  public function delete(string $id): bool
   {
     try {
-      $entityId = new EntityId($id);
+      $uuidObj = new UUID($id);
 
-      // Security check - users can only delete their own account
-      if (!isAuthenticated() || $_SESSION["user_id"] != $entityId->getValue()) {
+      if (!isAuthenticated() || $_SESSION["user_id"] != $uuidObj->getValue()) {
         throw new Exception("Unauthorized access attempt");
       }
 
       $stmt = $this->db->prepare("DELETE FROM user WHERE id = ?");
-      $result = $stmt->execute([$entityId->getValue()]);
+      $result = $stmt->execute([$uuidObj->getValue()]);
 
       if ($result) {
-        $this->deleteUserDirectory($entityId->getValue());
+        $this->deleteUserDirectory($uuidObj->getValue());
       }
 
       return $result;
@@ -189,7 +188,7 @@ class UserRepository
     }
   }
 
-  private function deleteUserDirectory(int $id): void
+  private function deleteUserDirectory(string $id): void
   {
     try {
       $userDir = __DIR__ . "/../../public/" . $id;
@@ -231,7 +230,6 @@ class UserRepository
         return null;
       }
 
-      // Update last login
       $stmt = $this->db->prepare(
         "UPDATE user SET last_login = datetime('now') WHERE id = ?",
       );
@@ -246,16 +244,16 @@ class UserRepository
   public function updateProfileImage(string $id, string $profile_image): bool
   {
     try {
-      $entityId = new EntityId($id);
+      $uuidObj = new UUID($id);
 
-      if (!isAuthenticated() || $_SESSION["user_id"] != $entityId->getValue()) {
+      if (!isAuthenticated() || $_SESSION["user_id"] != $uuidObj->getValue()) {
         throw new Exception("Unauthorized access attempt");
       }
 
       $stmt = $this->db->prepare(
         "UPDATE user SET profile_image = ? WHERE id = ?",
       );
-      $result = $stmt->execute([$profile_image, $entityId->getValue()]);
+      $result = $stmt->execute([$profile_image, $uuidObj->getValue()]);
 
       return $result;
     } catch (PDOException $e) {
@@ -271,16 +269,16 @@ class UserRepository
   public function deleteProfileImage(string $id): bool
   {
     try {
-      $entityId = new EntityId($id);
+      $uuidObj = new UUID($id);
 
-      if (!isAuthenticated() || $_SESSION["user_id"] != $entityId->getValue()) {
+      if (!isAuthenticated() || $_SESSION["user_id"] != $uuidObj->getValue()) {
         throw new Exception("Unauthorized access attempt");
       }
 
       $stmt = $this->db->prepare(
         "UPDATE user SET profile_image = NULL WHERE id = ?",
       );
-      $result = $stmt->execute([$entityId->getValue()]);
+      $result = $stmt->execute([$uuidObj->getValue()]);
 
       return $result;
     } catch (PDOException $e) {
@@ -292,6 +290,33 @@ class UserRepository
       return false;
     }
   }
-}
 
-?>
+  public function updatePassword(string $id, string $newPassword): bool
+  {
+    try {
+      $uuidObj = new UUID($id);
+      $passwordObj = new Password($newPassword);
+
+      if (!isAuthenticated() || $_SESSION["user_id"] != $uuidObj->getValue()) {
+        throw new Exception("Unauthorized access attempt");
+      }
+
+      $stmt = $this->db->prepare(
+        "UPDATE user SET password = ? WHERE id = ?",
+      );
+      $result = $stmt->execute([
+        $passwordObj->getHash(),
+        $uuidObj->getValue(),
+      ]);
+
+      return $result;
+    } catch (PDOException $e) {
+      error_log(
+        "UserRepository Error: " . $e->getMessage(),
+        3,
+        __DIR__ . "/../../debug.log",
+      );
+      return false;
+    }
+  }
+}

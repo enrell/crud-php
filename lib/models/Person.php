@@ -61,5 +61,3 @@ abstract class Person
     return $this->birthdate->format("d/m/Y");
   }
 }
-
-?>

@@ -23,5 +23,3 @@ function requireAuth(): void
     exit();
   }
 }
-
-?>

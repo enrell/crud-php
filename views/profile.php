@@ -51,9 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       $error = "Senha atual incorreta.";
     } else {
       try {
-        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        $stmt = $db->prepare("UPDATE user SET password = ? WHERE id = ?");
-        $stmt->execute([$hashedPassword, $userId]);
+        $userRepository->updatePassword($userId, $newPassword);
         $success = "Senha atualizada com sucesso!";
       } catch (Exception $e) {
         $error = "Erro ao atualizar senha: " . $e->getMessage();
