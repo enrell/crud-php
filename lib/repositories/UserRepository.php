@@ -174,6 +174,10 @@ class UserRepository
       $stmt = $this->db->prepare("DELETE FROM user WHERE id = ?");
       $result = $stmt->execute([$entityId->getValue()]);
 
+      if ($result) {
+        $this->deleteUserDirectory($entityId->getValue());
+      }
+
       return $result;
     } catch (PDOException $e) {
       error_log(
@@ -182,6 +186,39 @@ class UserRepository
         __DIR__ . "/../../debug.log",
       );
       return false;
+    }
+  }
+
+  private function deleteUserDirectory(int $id): void
+  {
+    try {
+      $userDir = __DIR__ . "/../../public/" . $id;
+
+      if (is_dir($userDir)) {
+        $it = new RecursiveDirectoryIterator(
+          $userDir,
+          RecursiveDirectoryIterator::SKIP_DOTS,
+        );
+        $files = new RecursiveIteratorIterator(
+          $it,
+          RecursiveIteratorIterator::CHILD_FIRST,
+        );
+        foreach ($files as $file) {
+          if ($file->isDir()) {
+            rmdir($file->getRealPath());
+          } else {
+            unlink($file->getRealPath());
+          }
+        }
+        rmdir($userDir);
+      }
+    } catch (Exception $e) {
+      error_log(
+        "UserRepository Error: Could not delete user directory for user ID: $id. " .
+          $e->getMessage(),
+        3,
+        __DIR__ . "/../../debug.log",
+      );
     }
   }
 
