@@ -13,54 +13,82 @@ if ($_POST) {
     $doctorId = (int) ($_POST["doctor_id"] ?? 0);
     $patientId = (int) ($_POST["patient_id"] ?? 0);
     $appointmentDate = $_POST["appointment_date"] ?? "";
-    $description = $_POST["description"] ?? "";
+    $description = sanitizeInput($_POST["description"] ?? "");
 
-    try {
-      $result = $appointmentRepository->create(
-        $doctorId,
-        $patientId,
-        $appointmentDate,
-        $description,
-      );
-      if ($result) {
-        $_SESSION["success_message"] = "Consulta agendada com sucesso!";
-      } else {
-        $_SESSION["error_message"] = "Falha ao agendar consulta.";
+    if (
+      $doctorId <= 0 ||
+      $patientId <= 0 ||
+      empty($appointmentDate) ||
+      empty($description)
+    ) {
+      $_SESSION["error_message"] = "Todos os campos são obrigatórios.";
+    } else {
+      try {
+        $result = $appointmentRepository->create(
+          $doctorId,
+          $patientId,
+          $appointmentDate,
+          $description,
+        );
+        if ($result) {
+          $_SESSION["success_message"] = "Consulta agendada com sucesso!";
+        } else {
+          $_SESSION["error_message"] = "Falha ao agendar consulta.";
+        }
+      } catch (InvalidArgumentException $e) {
+        $_SESSION["error_message"] = $e->getMessage();
       }
-    } catch (InvalidArgumentException $e) {
-      $_SESSION["error_message"] = $e->getMessage();
     }
   } elseif ($action === "update") {
     $id = (int) ($_POST["id"] ?? 0);
     $doctorId = (int) ($_POST["doctor_id"] ?? 0);
     $patientId = (int) ($_POST["patient_id"] ?? 0);
     $appointmentDate = $_POST["appointment_date"] ?? "";
-    $description = $_POST["description"] ?? "";
+    $description = sanitizeInput($_POST["description"] ?? "");
 
-    try {
-      $result = $appointmentRepository->update(
-        $id,
-        $doctorId,
-        $patientId,
-        $appointmentDate,
-        $description,
-      );
-      if ($result) {
-        $_SESSION["success_message"] = "Consulta atualizada com sucesso!";
-      } else {
-        $error = "Falha ao atualizar consulta.";
+    if (
+      $id <= 0 ||
+      $doctorId <= 0 ||
+      $patientId <= 0 ||
+      empty($appointmentDate) ||
+      empty($description)
+    ) {
+      $_SESSION["error_message"] = "Todos os campos são obrigatórios.";
+    } else {
+      try {
+        $result = $appointmentRepository->update(
+          $id,
+          $doctorId,
+          $patientId,
+          $appointmentDate,
+          $description,
+        );
+        if ($result) {
+          $_SESSION["success_message"] = "Consulta atualizada com sucesso!";
+        } else {
+          $error = "Falha ao atualizar consulta.";
+        }
+      } catch (InvalidArgumentException $e) {
+        $_SESSION["error_message"] = $e->getMessage();
       }
-    } catch (InvalidArgumentException $e) {
-      $_SESSION["error_message"] = $e->getMessage();
     }
   } elseif ($action === "delete") {
     $id = (int) ($_POST["id"] ?? 0);
-    $result = $appointmentRepository->delete($id);
-    if ($result) {
-      $_SESSION["success_message"] = "Consulta excluída com sucesso!";
+    if ($id <= 0) {
+      $_SESSION["error_message"] = "ID inválido.";
     } else {
-      $_SESSION["error_message"] =
-        "Falha ao excluir consulta. A consulta pode não existir ou já ter sido excluída. Atualize a página e tente novamente.";
+      try {
+        $result = $appointmentRepository->delete($id);
+        if ($result) {
+          $_SESSION["success_message"] = "Consulta excluída com sucesso!";
+        } else {
+          $_SESSION["error_message"] =
+            "Falha ao excluir consulta. A consulta pode não existir ou já ter sido excluída. Atualize a página e tente novamente.";
+        }
+      } catch (Exception $e) {
+        $_SESSION["error_message"] =
+          "Erro ao excluir consulta: " . $e->getMessage();
+      }
     }
   }
 }
@@ -71,10 +99,11 @@ $patients = $patientRepository->findAll();
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="pt-BR">
     <title>Consultas - Sistema de Agendamento Médico</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
@@ -152,7 +181,10 @@ $patients = $patientRepository->findAll();
 ] ?>, <?= $appointment["patient_id"] ?>, '<?= date(
   "Y-m-d",
   strtotime($appointment["appointment_date"]),
-) ?>', '<?= htmlspecialchars($appointment["description"]) ?>')">Editar</button>
+) ?>', '<?= htmlspecialchars(
+  $appointment["description"],
+  ENT_QUOTES,
+) ?>')">Editar</button>
                                     <form method="POST" style="display: inline;">
 
                                         <input type="hidden" name="action" value="delete">
@@ -212,8 +244,7 @@ $patients = $patientRepository->findAll();
 
                     <div class="form-group">
                         <label for="modal_appointment_date">Data da Consulta:</label>
-                        <input type="date" id="modal_appointment_date" name="appointment_date" required
-                               min="<?= date("Y-m-d") ?>">
+                        <input type="date" id="modal_appointment_date" name="appointment_date" required>
                     </div>
 
                     <div class="form-group">
