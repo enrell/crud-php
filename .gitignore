@@ -1,3 +1,4 @@
 *.sqlite
 *debug.log
 .mise.toml
+public/*
