@@ -13,46 +13,23 @@ class AppointmentDate
   private function validate(string $value): void
   {
     if (empty($value)) {
-      throw new InvalidArgumentException("Appointment date cannot be empty.");
-    }
-
-    $date = DateTime::createFromFormat("Y-m-d H:i:s", $value);
-    if (!$date || $date->format("Y-m-d H:i:s") !== $value) {
       throw new InvalidArgumentException(
-        "Invalid appointment date format. Expected format: Y-m-d H:i:s",
+        "A data da consulta não pode estar vazia.",
       );
     }
 
-    $now = new DateTime();
-    if ($date <= $now) {
+    // O formato 'Y-m-d' é o padrão universal para <input type="date">
+    $date = DateTime::createFromFormat("Y-m-d", $value);
+
+    // Verifica se o formato da string está incorreto
+    if ($date === false) {
       throw new InvalidArgumentException(
-        "Appointment date must be in the future.",
+        "Formato de data inválido. O formato esperado é YYYY-MM-DD.",
       );
     }
 
-    // Check if appointment is within reasonable time frame (max 2 years in future)
-    $maxFutureDate = new DateTime()->modify("+2 years");
-    if ($date > $maxFutureDate) {
-      throw new InvalidArgumentException(
-        "Appointment date cannot be more than 2 years in the future.",
-      );
-    }
-
-    // Check if appointment is during business hours (8 AM to 6 PM)
-    $hour = (int) $date->format("H");
-    if ($hour < 8 || $hour >= 18) {
-      throw new InvalidArgumentException(
-        "Appointment must be scheduled during business hours (8 AM to 6 PM).",
-      );
-    }
-
-    // Check if appointment is not on weekend
-    $dayOfWeek = (int) $date->format("w");
-    if ($dayOfWeek === 0 || $dayOfWeek === 6) {
-      throw new InvalidArgumentException(
-        "Appointments cannot be scheduled on weekends.",
-      );
-    }
+    // Normaliza a data para o início do dia para uma comparação justa
+    $date->setTime(0, 0, 0);
   }
 
   public function getValue(): string
@@ -63,7 +40,7 @@ class AppointmentDate
   public function getFormattedDate(): string
   {
     $date = new DateTime($this->value);
-    return $date->format("M j, Y g:i A");
+    return $date->format("d/m/Y"); // Formato brasileiro para exibição
   }
 
   public function isToday(): bool
