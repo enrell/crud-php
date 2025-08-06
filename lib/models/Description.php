@@ -19,13 +19,6 @@ class Description
     }
 
     $trimmedValue = trim($value);
-    if (strlen($trimmedValue) < self::MIN_LENGTH) {
-      throw new InvalidArgumentException(
-        "Description must be at least " .
-          self::MIN_LENGTH .
-          " characters long.",
-      );
-    }
 
     if (strlen($trimmedValue) > self::MAX_LENGTH) {
       throw new InvalidArgumentException(
