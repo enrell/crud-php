@@ -1,9 +1,7 @@
 <?php
-include "header.php";
 require_once "../lib/backend.php";
 
 $error = "";
-
 $currentPage = "login";
 
 if ($_POST) {
@@ -42,6 +40,7 @@ if ($_POST) {
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
+    <?php include "header.php"; ?>
     <main class="container">
         <div class="form-container">
             <h2>Entrar</h2>
