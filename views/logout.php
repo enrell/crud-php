@@ -1,8 +1,5 @@
 <?php
-require_once "../lib/backend.php";
-
-$currentPage = "logout";
-include "header.php";
+require_once "../lib/security/SecurityHelper.php";
 
 session_destroy();
 header("Location: ../index.php");
