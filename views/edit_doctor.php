@@ -23,13 +23,17 @@ if ($_POST && $doctor) {
   $name = sanitizeInput($_POST["name"] ?? "");
   $expertise = sanitizeInput($_POST["expertise"] ?? "");
 
-  $result = $doctorRepository->update($doctor["id"], $name, $expertise);
-  if ($result) {
-    $success = "Doctor updated successfully!";
-    // Refresh doctor data after update
-    $doctor = $doctorRepository->findById($doctor["id"]);
-  } else {
-    $error = "Failed to update doctor.";
+  try {
+    $result = $doctorRepository->update($doctor["id"], $name, $expertise);
+    if ($result) {
+      $success = "Doctor updated successfully!";
+      // Refresh doctor data after update
+      $doctor = $doctorRepository->findById($doctor["id"]);
+    } else {
+      $error = "Failed to update doctor.";
+    }
+  } catch (Exception $e) {
+    $error = "Error updating doctor: " . $e->getMessage();
   }
 }
 ?>
