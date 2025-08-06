@@ -25,28 +25,33 @@ if ($_POST && $appointment) {
   $appointmentDate = $_POST["appointment_date"] ?? "";
   $description = sanitizeInput($_POST["description"] ?? "");
 
-  $result = $appointmentRepository->update(
-    $appointment["id"],
-    $doctorId,
-    $patientId,
-    $appointmentDate,
-    $description,
-  );
-  if ($result) {
-    $success = "Appointment updated successfully!";
-    // Refresh appointment data after update
-    $appointment = $appointmentRepository->findById($appointment["id"]);
-  } else {
-    $error = "Failed to update appointment.";
+  try {
+    $result = $appointmentRepository->update(
+      $appointment["id"],
+      $doctorId,
+      $patientId,
+      $appointmentDate,
+      $description,
+    );
+    if ($result) {
+      $success = "Appointment updated successfully!";
+      // Refresh appointment data after update
+      $appointment = $appointmentRepository->findById($appointment["id"]);
+    } else {
+      $error = "Failed to update appointment.";
+    }
+  } catch (Exception $e) {
+    $error = "Error updating appointment: " . $e->getMessage();
   }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="pt-BR">
     <title>Editar Consulta - Sistema de Agendamento Médico</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
@@ -67,6 +72,10 @@ if ($_POST && $appointment) {
         <?php endif; ?>
 
         <?php if ($appointment): ?>
+        <?php
+        $doctors = $doctorRepository->findAll();
+        $patients = $patientRepository->findAll();
+        ?>
         <div class="form-container">
             <form method="POST">
                 <div class="form-group">
