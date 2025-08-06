@@ -6,7 +6,6 @@ $error = "";
 $success = "";
 
 $currentPage = "signup";
-include "header.php";
 
 if ($_POST) {
   $username = $_POST["username"] ?? "";
@@ -54,7 +53,7 @@ if ($_POST) {
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-
+    <?php include "header.php"; ?>
 
     <main class="container">
         <div class="form-container">
