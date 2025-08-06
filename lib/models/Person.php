@@ -16,25 +16,24 @@ abstract class Person
   private function validateBirthdate(string $birthdate): DateTime
   {
     if (empty($birthdate)) {
-      throw new InvalidArgumentException("Birthdate cannot be empty.");
+      throw new InvalidArgumentException(
+        "A data de nascimento não pode estar vazia.",
+      );
     }
 
     $date = DateTime::createFromFormat("Y-m-d", $birthdate);
     if (!$date || $date->format("Y-m-d") !== $birthdate) {
       throw new InvalidArgumentException(
-        "Invalid birthdate format. Expected format: Y-m-d",
+        "Formato de data de nascimento inválido. O formato esperado é YYYY-MM-DD.",
       );
     }
 
-    $now = new DateTime();
-    if ($date > $now) {
-      throw new InvalidArgumentException("Birthdate cannot be in the future.");
-    }
+    $date->setTime(0, 0, 0);
+    $today = new DateTime("today");
 
-    $maxAgeDate = new DateTime()->modify("-120 years");
-    if ($date < $maxAgeDate) {
+    if ($date > $today) {
       throw new InvalidArgumentException(
-        "Birthdate indicates an absurd age (over 120 years).",
+        "A data de nascimento não pode ser no futuro.",
       );
     }
 
@@ -59,7 +58,7 @@ abstract class Person
 
   public function getBirthdateFormatted(): string
   {
-    return $this->birthdate->format("M j, Y");
+    return $this->birthdate->format("d/m/Y");
   }
 }
 
