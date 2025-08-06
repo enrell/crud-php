@@ -12,46 +12,59 @@ if ($_POST) {
   $action = $_POST["action"] ?? "";
 
   if ($action === "create") {
-    $name = $_POST["name"] ?? "";
-    $expertise = $_POST["expertise"] ?? "";
+    $name = sanitizeInput($_POST["name"] ?? "");
+    $expertise = sanitizeInput($_POST["expertise"] ?? "");
 
-    try {
-      $result = $doctorRepository->create($name, $expertise);
-      if ($result) {
-        $_SESSION["success_message"] = "Doctor registered successfully!";
-      } else {
-        $_SESSION["error_message"] = "Failed to register doctor.";
+    if (empty($name) || empty($expertise)) {
+      $_SESSION["error_message"] = "Nome e especialidade são obrigatórios.";
+    } else {
+      try {
+        $result = $doctorRepository->create($name, $expertise);
+        if ($result) {
+          $_SESSION["success_message"] = "Doctor registered successfully!";
+        } else {
+          $_SESSION["error_message"] = "Failed to register doctor.";
+        }
+      } catch (InvalidArgumentException $e) {
+        $_SESSION["error_message"] = $e->getMessage();
       }
-    } catch (InvalidArgumentException $e) {
-      $_SESSION["error_message"] = $e->getMessage();
     }
   } elseif ($action === "update") {
     $id = (int) ($_POST["id"] ?? 0);
-    $name = $_POST["name"] ?? "";
-    $expertise = $_POST["expertise"] ?? "";
+    $name = sanitizeInput($_POST["name"] ?? "");
+    $expertise = sanitizeInput($_POST["expertise"] ?? "");
 
-    try {
-      $result = $doctorRepository->update($id, $name, $expertise);
-      if ($result) {
-        $_SESSION["success_message"] = "Doctor updated successfully!";
-      } else {
-        $error = "Failed to update doctor.";
+    if ($id <= 0 || empty($name) || empty($expertise)) {
+      $_SESSION["error_message"] = "Dados inválidos fornecidos.";
+    } else {
+      try {
+        $result = $doctorRepository->update($id, $name, $expertise);
+        if ($result) {
+          $_SESSION["success_message"] = "Doctor updated successfully!";
+        } else {
+          $_SESSION["error_message"] = "Failed to update doctor.";
+        }
+      } catch (InvalidArgumentException $e) {
+        $_SESSION["error_message"] = $e->getMessage();
       }
-    } catch (InvalidArgumentException $e) {
-      $_SESSION["error_message"] = $e->getMessage();
     }
   } elseif ($action === "delete") {
     $id = (int) ($_POST["id"] ?? 0);
-    try {
-      $result = $doctorRepository->delete($id);
-      if ($result) {
-        $_SESSION["success_message"] = "Doctor deleted successfully!";
-      } else {
+    if ($id <= 0) {
+      $_SESSION["error_message"] = "ID inválido.";
+    } else {
+      try {
+        $result = $doctorRepository->delete($id);
+        if ($result) {
+          $_SESSION["success_message"] = "Doctor deleted successfully!";
+        } else {
+          $_SESSION["error_message"] =
+            "Failed to delete doctor. They may have active appointments.";
+        }
+      } catch (Exception $e) {
         $_SESSION["error_message"] =
-          "Failed to delete doctor. They may have active appointments.";
+          "Erro ao excluir médico: " . $e->getMessage();
       }
-    } catch (InvalidArgumentException $e) {
-      $_SESSION["error_message"] = $e->getMessage();
     }
   }
 }
@@ -132,7 +145,11 @@ $doctors = $doctorRepository->findAll();
                                       "id"
                                     ] ?>, '<?= htmlspecialchars(
   $doctor["name"],
-) ?>', '<?= htmlspecialchars($doctor["expertise"]) ?>')">Editar</button>
+  ENT_QUOTES,
+) ?>', '<?= htmlspecialchars(
+  $doctor["expertise"],
+  ENT_QUOTES,
+) ?>')">Editar</button>
                                     <form method="POST" style="display: inline;">
 
                                         <input type="hidden" name="action" value="delete">
