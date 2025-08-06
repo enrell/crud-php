@@ -24,27 +24,32 @@ if ($_POST && $patient) {
   $birthdate = $_POST["birthdate"] ?? "";
   $bloodType = sanitizeInput($_POST["blood_type"] ?? "");
 
-  $result = $patientRepository->update(
-    $patient["id"],
-    $name,
-    $birthdate,
-    $bloodType,
-  );
-  if ($result) {
-    $success = "Patient updated successfully!";
-    // Refresh patient data after update
-    $patient = $patientRepository->findById($patient["id"]);
-  } else {
-    $error = "Failed to update patient.";
+  try {
+    $result = $patientRepository->update(
+      $patient["id"],
+      $name,
+      $birthdate,
+      $bloodType,
+    );
+    if ($result) {
+      $success = "Patient updated successfully!";
+      // Refresh patient data after update
+      $patient = $patientRepository->findById($patient["id"]);
+    } else {
+      $error = "Failed to update patient.";
+    }
+  } catch (Exception $e) {
+    $error = "Error updating patient: " . $e->getMessage();
   }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="pt-BR">
     <title>Editar Paciente - Sistema de Agendamento Médico</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
@@ -76,9 +81,10 @@ if ($_POST && $patient) {
 
                 <div class="form-group">
                     <label for="birthdate">Data de Nascimento:</label>
-                    <input type="date" id="birthdate" name="birthdate" required value="<?= htmlspecialchars(
-                      $patient["birthdate"],
-                    ) ?>">
+                    <input type="date" id="birthdate" name="birthdate" required max="<?php
+                    date_default_timezone_set("America/Sao_Paulo");
+                    echo date("Y-m-d");
+                    ?>" value="<?= htmlspecialchars($patient["birthdate"]) ?>">
                 </div>
 
                 <div class="form-group">
