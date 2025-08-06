@@ -20,11 +20,7 @@ class Name
         "Name can only contain letters and spaces.",
       );
     }
-    if (strlen($value) < 6 || strlen($value) > 50) {
-      throw new InvalidArgumentException(
-        "Name must be between 6 and 50 characters long.",
-      );
-    }
+
     return true;
   }
 
