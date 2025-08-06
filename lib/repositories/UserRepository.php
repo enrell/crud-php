@@ -74,6 +74,27 @@ class UserRepository
     }
   }
 
+  public function findByIdWithPassword(int $id): ?array
+  {
+    try {
+      $entityId = new EntityId($id);
+
+      $stmt = $this->db->prepare(
+        "SELECT id, username, email, password, profile_image FROM user WHERE id = ?",
+      );
+      $stmt->execute([$entityId->getValue()]);
+      $result = $stmt->fetch(PDO::FETCH_ASSOC);
+      return $result ?: null;
+    } catch (PDOException $e) {
+      error_log(
+        "UserRepository Error: " . $e->getMessage(),
+        3,
+        __DIR__ . "/../../debug.log",
+      );
+      return null;
+    }
+  }
+
   public function findByEmail(string $email): ?array
   {
     try {
@@ -216,11 +237,13 @@ class UserRepository
       $entityId = new EntityId($id);
 
       if (!isAuthenticated() || $_SESSION["user_id"] != $entityId->getValue()) {
-        $stmt = $this->db->prepare(
-          "UPDATE user SET profile_image = NULL WHERE id = ?",
-        );
-        $result = $stmt->execute([$entityId->getValue()]);
+        throw new Exception("Unauthorized access attempt");
       }
+
+      $stmt = $this->db->prepare(
+        "UPDATE user SET profile_image = NULL WHERE id = ?",
+      );
+      $result = $stmt->execute([$entityId->getValue()]);
 
       return $result;
     } catch (PDOException $e) {
